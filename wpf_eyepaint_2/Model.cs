@@ -228,6 +228,9 @@ namespace wpf_eyepaint_2
                 case "ModernArtTree":
                     tree = new ModernArtTree(color, root, branchLength, leaves.Count(), parents, leaves, branchWidth, hullWidth, leafSize);
                     break;
+                case "BubbleTree":
+                    tree = new BubbleTree(color, root, branchLength, leaves.Count(), parents, leaves, branchWidth, hullWidth, leafSize);
+                    break;
                 default:
                     break;
             }

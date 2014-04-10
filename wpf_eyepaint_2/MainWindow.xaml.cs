@@ -26,20 +26,24 @@ namespace wpf_eyepaint_2
         Point gaze;
         bool paint = false;
         bool menuActive;
-        bool isKeyDown = false;
+        bool isKeyDown = false; //TODO see if other soultion is possible?
+        
         //Painting
         static readonly int pictureWidth = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
         static readonly int pictureHeight = (int)(System.Windows.SystemParameters.PrimaryScreenHeight * 0.8); //TODO CHANGE 0.8 TO Constant
         RenderTargetBitmap painting = new RenderTargetBitmap(pictureWidth, pictureHeight, 96, 96, PixelFormats.Pbgra32);
         
 
-        // 
+        //Tools 
         List<PaintTool> paintTools;
         List<ColorTool> colorTools;
-        Button activeButton;
+        
+        //Buttons
+        Button activeButton;        
         List<Button> toolButtons;
         List<Button> colorButtons;
-        
+
+
         Model model;
         View view;
 
@@ -55,12 +59,16 @@ namespace wpf_eyepaint_2
             colorTools = sf.getColorTools();
             model = new Model(paintTools[0], colorTools[0]);
             view = new View(painting);
+
+            toolButtons = new List<Button>();
+            colorButtons = new List<Button>();
                         
             //Initialize GUI
             InitializeComponent();
             initializeMenu();
             paintingImage.Source = painting;
-
+         
+            
 
             //Initalize eventhandlers
             MouseMove += (object s, MouseEventArgs e) => trackGaze(new Point(Mouse.GetPosition(paintingImage).X,Mouse.GetPosition(paintingImage).Y), paint, 0);
@@ -93,7 +101,7 @@ namespace wpf_eyepaint_2
             int leftmargin = (int)menuPanel.Margin.Left;
             int rightmargin = (int)menuPanel.Margin.Right;
             int btnWidth = (pictureWidth - leftmargin - rightmargin) / (colorTools.Count() + paintTools.Count + paintToolPanel.Children.Count + colorToolPanel.Children.Count);
-      
+            
             
             //Add Colortools
             DockPanel.SetDock(colorToolPanel, Dock.Left);
@@ -113,7 +121,7 @@ namespace wpf_eyepaint_2
                     model.ChangeColorTool(ct);
                 };
                 colorToolPanel.Children.Add(btn);
-                //colorButtons.Add(btn);
+                colorButtons.Add(btn);
             }
             foreach(PaintTool pt in paintTools)
             {
@@ -122,6 +130,8 @@ namespace wpf_eyepaint_2
 
                 String path = Directory.GetCurrentDirectory() + "\\icons\\" + pt.iconImage; //TODO ev change to resources
                 brush.ImageSource = new BitmapImage(new Uri(path));
+               // brush.ImageSource = new BitmapImage());
+                
                 btn.Background = brush;
                 btn.Focusable = false;
                 btn.Width = btnWidth;
@@ -130,6 +140,7 @@ namespace wpf_eyepaint_2
                     model.ChangePaintTool(pt);
                 };
                 paintToolPanel.Children.Add(btn);
+                toolButtons.Add(btn);
             }
             saveButton.Width = btnWidth;
             setRandomBackgroundButton.Width = btnWidth;
@@ -139,10 +150,12 @@ namespace wpf_eyepaint_2
         void onSetRandomBackGroundClick(object sender, RoutedEventArgs e)
         {
             setBackGroundToRandomColor();
+            model.ResetModel();
         }
 
         void onSaveClick(object sender, RoutedEventArgs e)
         {
+            //TODO CHANGE
             Application.Current.Shutdown();
         }
       
@@ -150,7 +163,6 @@ namespace wpf_eyepaint_2
         //Methods for keypress
         void MainWindow_KeyUp(object sender, KeyEventArgs e)
         {
-            Console.WriteLine("keyup"+gaze.X + " " + gaze.Y);
             isKeyDown = false;
             stopPainting();
         }
@@ -159,17 +171,16 @@ namespace wpf_eyepaint_2
         {
             if (isKeyDown) return;
             isKeyDown = true;
-            Console.WriteLine("keydown" +gaze.X + " " + gaze.Y);
             startPainting();
             
         }
         void startPainting()
         {
-            //if (menuActive) return; TODO CHANGE
+            if (menuActive) return; 
             if (paint) return;
             paint = true;
             paintTimer.Start();
-            Console.WriteLine("start painting was called and status of paintTimer is"+ paintTimer.IsEnabled);
+            trackGaze(gaze, paint, 0);
             inactivityTimer.Stop();
         }
 
@@ -180,7 +191,7 @@ namespace wpf_eyepaint_2
             paintTimer.Stop();
             inactivityTimer.Start();
         }
-        void trackGaze(Point p, bool keep = true, int keyhole = 0)
+        void trackGaze(Point p, bool keep = true, int keyhole = 100)
         {
             var distance = Math.Sqrt(Math.Pow(gaze.X - p.X, 2) + Math.Pow(gaze.Y - p.Y, 2));
             if (distance < keyhole) return;

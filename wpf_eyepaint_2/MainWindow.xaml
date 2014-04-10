@@ -21,7 +21,7 @@
                 </Button>
             </DockPanel>
             <DockPanel Grid.Column="0" Grid.Row="0" Name="paintToolPanel" >
-                <Button Name="setRandomBackgroundButton" Click="onSetRandomBackGroundClick" DockPanel.Dock="Left">
+                <Button Name="setRandomBackgroundButton" Click="onSetRandomBackGroundClick" DockPanel.Dock="Left" Focusable="False">
                     <Button.Background>
                         <ImageBrush ImageSource= "new.png" />
                     </Button.Background>

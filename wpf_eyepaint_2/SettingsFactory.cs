@@ -40,10 +40,24 @@ namespace wpf_eyepaint_2
                                         stringToToolType("TREE"),
                                         "bullseye.png",
                                         "CellNetTree", 25, 300, 800, 25, 2, 5, 0, 10);
+            TreeTool bubbleTool =       new TreeTool(4,
+                                        "bubblePaint",
+                                        stringToToolType("TREE"),
+                                        "cloud.png",
+                                        "BubbleTree",
+                                        15,   // branch length
+                                        10, // number of leaves
+                                        800, // max generation
+                                        120,  // opacity
+                                        0,   // branchWidth
+                                        1,   // hullWidth
+                                        30,10
+                                        );  // leaf size
             paintTools.Add(woolTool);
             paintTools.Add(polyTool);
             paintTools.Add(modernArtTool);
             paintTools.Add(cellNetTool);
+            paintTools.Add(bubbleTool);
             return paintTools;
         }
 
@@ -68,6 +82,7 @@ namespace wpf_eyepaint_2
             colorTools.Add(new ColorTool("blue", "blue.png",  200, 255, 0.9, 1, 0.5, 1));
             colorTools.Add(new ColorTool( "yellow", "yellow.png",  28, 60, 0.9, 1, 0.9, 1));
             colorTools.Add(new ColorTool( "green", "green.png", 90, 148, 0.9, 1, 0.5, 1));
+            colorTools.Add(new ColorTool("rainbow", "rainbow.png", 0, 360, 0.9, 1, 0.5, 1));
 
             return colorTools;
         }
