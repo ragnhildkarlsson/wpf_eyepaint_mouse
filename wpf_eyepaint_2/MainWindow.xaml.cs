@@ -24,8 +24,9 @@ namespace wpf_eyepaint_2
     {
 
         Point gaze;
-        bool paint = true;
+        bool paint = false;
         bool menuActive;
+        bool isKeyDown = false;
         //Painting
         static readonly int pictureWidth = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
         static readonly int pictureHeight = (int)(System.Windows.SystemParameters.PrimaryScreenHeight * 0.8); //TODO CHANGE 0.8 TO Constant
@@ -75,7 +76,7 @@ namespace wpf_eyepaint_2
             //Initialize timers
             paintTimer = new DispatcherTimer();
             paintTimer.Interval = TimeSpan.FromMilliseconds(1);
-            paintTimer.Tick += (object s, EventArgs e) => {model.Grow();rasterizeModel(); };
+            paintTimer.Tick += (object s, EventArgs e) => { model.Grow(); rasterizeModel(); Console.WriteLine("a tick was ticked"); };
 
             // Set timer for inactivity
             inactivityTimer = new DispatcherTimer();
@@ -150,22 +151,25 @@ namespace wpf_eyepaint_2
         void MainWindow_KeyUp(object sender, KeyEventArgs e)
         {
             Console.WriteLine("keyup"+gaze.X + " " + gaze.Y);
+            isKeyDown = false;
             stopPainting();
         }
 
         void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-
+            if (isKeyDown) return;
+            isKeyDown = true;
             Console.WriteLine("keydown" +gaze.X + " " + gaze.Y);
             startPainting();
             
         }
         void startPainting()
         {
-            if (menuActive) return;
+            //if (menuActive) return; TODO CHANGE
             if (paint) return;
             paint = true;
             paintTimer.Start();
+            Console.WriteLine("start painting was called and status of paintTimer is"+ paintTimer.IsEnabled);
             inactivityTimer.Stop();
         }
 
@@ -186,6 +190,7 @@ namespace wpf_eyepaint_2
 
         void rasterizeModel()
         {
+            Console.WriteLine("raseterize was called");
             view.Rasterize(model.GetRenderQueue());
         }
 
