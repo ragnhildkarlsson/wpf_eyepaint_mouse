@@ -52,7 +52,7 @@ namespace wpf_eyepaint_2
         SolidColorBrush mySolidColorBrush = new SolidColorBrush();
         DrawingVisual drawingVisual = new DrawingVisual();
         Random rnd = new Random();
-
+        Pen pen = new Pen();
         
         internal Canvas(RenderTargetBitmap image)
         {
@@ -103,6 +103,39 @@ namespace wpf_eyepaint_2
             image.Render(drawingVisual);
 
         }
+
+        internal void DrawBezier(double thickness, Color color, Point startPoint, Point controlPoint, Point endPoint)
+        {
+            PathFigure myPathFigure = new PathFigure();
+            myPathFigure.StartPoint = startPoint;
+
+            BezierSegment myBezierSegment = new BezierSegment(startPoint, endPoint, controlPoint, true);
+
+            PathSegmentCollection myPathSegmentCollection = new PathSegmentCollection();
+            myPathSegmentCollection.Add(myBezierSegment);
+
+            myPathFigure.Segments = myPathSegmentCollection;
+
+            PathFigureCollection myPathFigureCollection = new PathFigureCollection();
+            myPathFigureCollection.Add(myPathFigure);
+
+            PathGeometry myPathGeometry = new PathGeometry();
+            myPathGeometry.Figures = myPathFigureCollection;
+
+            DrawingContext drawingContext = drawingVisual.RenderOpen();
+
+            mySolidColorBrush.Color = color;
+            //ApplyColortool(color.A);
+            pen.Brush = mySolidColorBrush;
+            pen.Thickness = thickness;
+
+            drawingContext.DrawGeometry(null, pen, myPathGeometry);
+
+            drawingContext.Close();
+            image.Render(drawingVisual);
+        }
+
+
 
         internal void SetBackGroundColor(Color color)
         {

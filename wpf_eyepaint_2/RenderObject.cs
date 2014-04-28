@@ -117,6 +117,34 @@ namespace wpf_eyepaint_2
                 }
             }
         }
+
+        protected void DrawSplinesBetweenLeaves(ref Canvas imageObject)
+        {
+            Random rnd = new Random();
+            for (int i = 0; i < leaves.Count(); i++)
+            {
+                int j = rnd.Next(0, i);
+                Point p1 = leaves[i];
+                Point p2 = leaves[j];
+                leaves[i] = p2;
+                leaves[j] = p1;
+            }
+            int nSplines = leaves.Count() / 3;
+
+            int k = 0;
+            for (int i = 0; i < nSplines; i++)
+            {
+                Point p1 = leaves[k];
+                Point p2 = leaves[k + 1];
+                Point p3 = leaves[k + 2];
+                k = k + 3;
+                imageObject.DrawBezier(hullWidth, color, p1, p2, p3);
+
+            }
+
+
+        }
+
     }
 
     class PolyTree : Tree
@@ -231,10 +259,31 @@ namespace wpf_eyepaint_2
 
         internal override void Rasterize(ref Canvas imageObject)
         {
-            //DrawBranches(ref imageObject);
-            //FillHull(ref imageObject);
             DrawBubbleLeaves(ref imageObject);
-            //DrawHull(ref imageObject);
         }
+        }
+    class ScribbleTree : Tree
+        {
+            internal ScribbleTree(
+                  Color color,
+                  Point root,
+                  int branchLength,
+                  int nLeaves,
+                  Point[] previousGen,
+                  Point[] startLeaves,
+                  int branchWidth,
+                  int hullWidth,
+                  int leafSize)
+                : base(
+                         color, root, branchLength, nLeaves, previousGen, startLeaves, branchWidth, hullWidth, leafSize)
+            {
+            }
+
+            internal override void Rasterize(ref Canvas imageObject)
+            {
+                DrawSplinesBetweenLeaves(ref imageObject);
+            }
+        }
+
     }
-}
+

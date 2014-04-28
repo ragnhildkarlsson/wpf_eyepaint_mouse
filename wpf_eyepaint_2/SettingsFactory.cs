@@ -53,11 +53,17 @@ namespace wpf_eyepaint_2
                                         1,   // hullWidth
                                         30,10
                                         );  // leaf size
+            TreeTool scribbleTool = new TreeTool(5,
+                                     "scribblePaint",
+                                     stringToToolType("TREE"),
+                                     "bullseye.png",
+                                     "ScribbleTree", 7, 4, 800, 100, 1, 3, 0, 10);
             paintTools.Add(woolTool);
             paintTools.Add(polyTool);
             paintTools.Add(modernArtTool);
             paintTools.Add(cellNetTool);
             paintTools.Add(bubbleTool);
+            paintTools.Add(scribbleTool);
             return paintTools;
         }
 
